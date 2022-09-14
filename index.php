@@ -1,22 +1,22 @@
 <?php
   define("the_cred-banco",true);
   require("./acesso-controlado/cred-banco.php");
-
+  
   $con = new mysqli($host, $user_banco, $senha_banco, $nome_banco);
-  $stmt = $con->prepare("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '*************************' AND  TABLE_NAME = 'produtos'");
+  $stmt = $con->prepare("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = $table_schema AND  TABLE_NAME = 'produtos'");
   $stmt->execute();
   $res = $stmt->get_result();
   $stmt->close();
   $row = $res->fetch_assoc();
-
+  
   $qtdTable = $row['COUNT(*)'];
-
+  
   $tem_a_tabela = false;
-
+  
   if($qtdTable == 0){
       echo 'Deve-se criar uma nova tabela'."<br>";
       $stmt = $con->prepare("CREATE TABLE 'produtos' (
-                            	id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                              id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
                                 descricao VARCHAR(120) NOT NULL,
                                 marca VARCHAR(80) NOT NULL,
                                 estoque MEDIUMINT NOT NULL,
@@ -25,12 +25,12 @@
                             );");
        $stmt->execute();
        $stmt->close();
-       $stmt = $con->prepare("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '*************************' AND  TABLE_NAME = 'produtos'");
+       $stmt = $con->prepare("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'micsgc28_gerenciador_de_produtos' AND  TABLE_NAME = 'produtos'");
        $stmt->execute();
        $res = $stmt->get_result();
        $stmt->close();
        $row = $res->fetch_assoc();
-
+      
        $qtdTable = $row['COUNT(*)'];
        if($qtdTable == 1){
            $tem_a_tabela = true;
@@ -38,10 +38,11 @@
   }else{
      $tem_a_tabela = true;
   }
-
+  
 echo "
 <!DOCTYPE html>
 <html lang=\"pt-br\">
+
 <head>
     <meta charset=\"utf-8\">
 <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js\"></script>
@@ -53,6 +54,7 @@ echo "
     <link rel=\"stylesheet\" href=\"assets/css/Navbar-Centered-Links.css\">
     <link rel=\"stylesheet\" href=\"assets/css/styles.css\">
 </head>
+
 <body>
     <nav class=\"navbar navbar-light navbar-expand-md py-3\">
         <div class=\"container\"><a class=\"navbar-brand d-flex align-items-center\" href=\"#\"><span class=\"bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" fill=\"currentColor\" viewBox=\"0 0 16 16\" class=\"bi bi-boxes\">
@@ -77,7 +79,7 @@ echo "
             <tbody id=\"tableBody\">
 ";
 
-
+  
 if($tem_a_tabela == true){
    $stmt = $con->prepare("SELECT * FROM produtos");
    $stmt->execute();
@@ -105,7 +107,7 @@ if($tem_a_tabela == true){
    if($qtdRow == 0){
        echo "<td style='text-align:center'colspan=\"6\">Sem produtos cadastrados</td>";
    }
-
+  
 }else{
     echo "<div class=\"alert alert-danger\" role=\"alert\">
         <h4 class=\"alert-heading\">Erro no banco de dados</h4><span>Não foi possível criar uma tabela na base de dados. Consulte o desenvolvedor e informe este erro.</span>
@@ -211,6 +213,7 @@ echo"
     <script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js\"></script>
     <script src=\"assets/js/script.js\"></script>
 </body>
+
 </html>
 ";
   $con->close();
