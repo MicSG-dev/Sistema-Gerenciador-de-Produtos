@@ -25,7 +25,7 @@
                             );");
        $stmt->execute();
        $stmt->close();
-       $stmt = $con->prepare("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'micsgc28_gerenciador_de_produtos' AND  TABLE_NAME = 'produtos'");
+       $stmt = $con->prepare("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = $table_schema AND  TABLE_NAME = 'produtos'");
        $stmt->execute();
        $res = $stmt->get_result();
        $stmt->close();
